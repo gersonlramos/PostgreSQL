@@ -1,0 +1,1 @@
+## Alguns projetos de análise de dados utilizando SQL queries no PostgreSQL.
