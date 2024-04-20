@@ -215,6 +215,8 @@ FROM
 	GROUP BY a.full_name, a.nationality) x
 WHERE rnk=1;
 
+-- Thanks!!
+
 
 
 
