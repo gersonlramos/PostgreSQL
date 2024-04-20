@@ -188,12 +188,32 @@ WHERE rnk =5;
 
 -- 21: Which are the 3 most popular and 3 least popular painting styles?
 
+WITH cte AS (SELECT style, COUNT(style) as total_arts,
+	RANK()OVER(ORDER BY COUNT(style) DESC) AS rnk,
+	COUNT(*)OVER() AS num_of_records
+	FROM work
+	WHERE style IS NOT NULL
+	GROUP BY style)
+SELECT style, total_arts,
+CASE WHEN rnk <=3 THEN 'Most Popular' ELSE 'Least Popular' END AS remarks
+FROM cte
+WHERE rnk <= 3 OR rnk > num_of_records -3;
 
--- 22: Which artist has the most no of Portraits paintings outside USA?. 
--- Display artist name, no of paintings and the artist nationality.
+-- 22) Which artist has the most no of Portrait paintings outside the USA? 
+-- Display the artist's name, no of paintings, and the artist's nationality.
 
-
-
+SELECT full_name AS artist_name, nationality, num_of_paintings
+FROM
+	(SELECT a.full_name, a.nationality, COUNT(*) AS num_of_paintings,
+	RANK()OVER(ORDER BY COUNT(*) DESC) AS rnk
+	FROM work w
+	JOIN artist a ON a.artist_id=w.artist_id
+	JOIN subject s ON s.work_id=w.work_id
+	JOIN museum m ON m.museum_id=w.museum_id
+	WHERE s.subject = 'Portraits'
+	AND m.country != 'USA'
+	GROUP BY a.full_name, a.nationality) x
+WHERE rnk=1;
 
 
 
